@@ -17,22 +17,18 @@ def homepage():
 @app.route('/froyo')
 def choose_froyo():
     """Shows a form to collect the user's Fro-Yo order."""
-    return """
-    <form action="/froyo_results" method="GET">
-        What is your favorite Fro-Yo flavor? <br/>
-        <input type="text" name="flavor"><br/>
-        What are your favorite Fro-Yo toppings? <br/>
-        <input type="text" name="toppings"><br/>
-        <input type="submit" value="Submit!">
-    </form>
-    """
+    return render_template('froyo_form.html')
 
 @app.route('/froyo_results')
 def show_froyo_results():
     """Shows the user what they ordered from the previous page."""
-    users_froyo_flavor = request.args.get('flavor')
-    users_froyo_toppings = request.args.get('toppings')
-    return f'You ordered {users_froyo_flavor} flavored Fro-Yo with toppings {users_froyo_toppings}!'
+    
+    context = {
+        'users_froyo_flavor': request.args.get('flavor'),
+        'users_froyo_toppings': request.args.get('toppings')
+    }
+
+    return render_template('froyo_results.html', **context)
 
 @app.route('/favorites')
 def favorites():
@@ -55,7 +51,7 @@ def favorites_results():
     users_fav_color = request.args.get('color')
     users_fav_animal = request.args.get('animal')
     users_fav_city = request.args.get('city')
-    return f"Wow, I didn't know {color} {animal}s lived in {city}!"
+    return f"Wow, I didn't know {users_fav_color} {users_fav_animal}s lived in {users_fav_city}!"
 
 @app.route('/secret_message')
 def secret_message():
@@ -79,40 +75,20 @@ def message_results():
 @app.route('/calculator')
 def calculator():
     """Shows the user a form to enter 2 numbers and an operation."""
-    return """
-    <form action="/calculator_results" method="GET">
-        Please enter 2 numbers and select an operator.<br/><br/>
-        <input type="number" name="operand1">
-        <select name="operation">
-            <option value="add">+</option>
-            <option value="subtract">-</option>
-            <option value="multiply">*</option>
-            <option value="divide">/</option>
-        </select>
-        <input type="number" name="operand2">
-        <input type="submit" value="Submit!">
-    </form>
-    """
+    return render_template('calculator_form.html')
 
 @app.route('/calculator_results')
 def calculator_results():
     """Shows the user the result of their calculation."""
-    users_operand1 = int(request.args.get('operand1'))
-    users_operation = request.args.get('operation')
-    users_operand2 = int(request.args.get('operand2'))
-    users_results = ""
 
-    if users_operation == "add":
-        users_results = users_operand1 + users_operand2
-    elif users_operation == "subtract":
-        users_results = users_operand1 - users_operand2
-    elif users_operation == "multiply":
-        users_results = users_operand1 * users_operand2
-    elif users_operation == "divide":
-        users_results = users_operand1 / users_operand2
+    context = {
+        'users_operand1': int(request.args.get('operand1')),
+        'users_operation': request.args.get('operation'),
+        'users_operand2': int(request.args.get('operand2')),
+        'users_results': ''
+    }
 
-    return f'You chose to {users_operation} {users_operand1} and {users_operand2}. Your result is: {users_results}'
-        
+    return render_template('calculator_results.html', **context)   
 
 
 HOROSCOPE_PERSONALITIES = {
@@ -139,17 +115,21 @@ def horoscope_form():
 def horoscope_results():
     """Shows the user the result for their chosen horoscope."""
 
+    # Get the users name
+    users_name = request.args.get('users_name')
+
     # TODO: Get the sign the user entered in the form, based on their birthday
-    horoscope_sign = ''
+    horoscope_sign = request.args.get('horoscope_sign')
 
     # TODO: Look up the user's personality in the HOROSCOPE_PERSONALITIES
     # dictionary based on what the user entered
-    users_personality = ''
+    users_personality = HOROSCOPE_PERSONALITIES.get(horoscope_sign)
 
     # TODO: Generate a random number from 1 to 99
-    lucky_number = 0
+    lucky_number = random.randint(1, 99)
 
     context = {
+        'name': users_name,
         'horoscope_sign': horoscope_sign,
         'personality': users_personality, 
         'lucky_number': lucky_number

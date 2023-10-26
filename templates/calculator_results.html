@@ -4,12 +4,16 @@
         <title>Calculator Results</title>
     </head>
     <body>
-        <!-- Your HTML code goes here! -->
+        {% if users_operation == "add" %}
+            {% set users_results = users_operand1 + users_operand2 %}
+        {% elif users_operation == "subtract" %}
+            {% set users_results = users_operand1 - users_operand2 %}
+        {% elif users_operation == "multiply" %}
+            {% set users_results = users_operand1 * users_operand2 %}
+        {% elif users_operation == "divide" %}
+            {% set users_results = users_operand1 / users_operand2 %}
+        {% endif %}
 
-
-
-
-
-        
+        <h4>You chose to {{users_operation}} {{users_operand1}} and {{users_operand2}}. Your result is: {{users_results}}</h4>
     </body>
 </html>
